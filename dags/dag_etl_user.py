@@ -15,11 +15,11 @@ from src.load import load_user
 
 # Konfigurasi Database (Host diarahkan ke nama service docker 'postgres')
 DB_CONFIG = {
-    'user': 'postgres',
-    'password': 'postgres',
+    'user': os.getenv('POSTGRES_USER', 'postgres'),
+    'password': os.getenv('POSTGRES_PASSWORD', 'postgres'),
     'host': 'postgres', 
     'port': '5432',
-    'name': 'de_project'
+    'name': os.getenv('POSTGRES_DB', 'de_project')
 }
 
 # Wrapper fungsi agar Airflow bisa menjembatani data via XCom (return value)
