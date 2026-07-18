@@ -106,6 +106,21 @@ Query the ingested data structure:
 SELECT id, first_name, last_name, email, university FROM users_etl LIMIT 5;
 ```
 
+## 💡 Advanced Configurations & Analytics
+
+### 1. Custom Infrastructure Build
+
+- **`airflow.Dockerfile`**: Used to build a customized Apache Airflow image, pre-installing corporate-level Python dependencies (`pandas`, `sqlalchemy`, `psycopg2-binary`) directly into the container filesystem for faster boot times.
+- **`postgres-init.sql`**: Configured as a Docker entrypoint script to automatically provision raw database schemas, user roles, or permissions immediately during the initial PostgreSQL container spin-up.
+
+### 2. Post-Ingestion Analytics (`sql/analytics_queries.sql`)
+
+Once the Airflow DAG successfully populates the target database, you can execute data analysis directly in PostgreSQL using our optimized analytics script. It includes queries for:
+
+- User demographic segmentation (e.g., counting users by `university`).
+- Missing values auditing and data quality checks.
+- String pattern profiling (e.g., validating formatted phone numbers or emails).
+
 ---
 
 **`Note`**: _The project still have more improvement to created solid integration_
