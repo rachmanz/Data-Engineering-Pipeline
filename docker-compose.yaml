@@ -1,21 +1,44 @@
 services:
   postgres:
     image: postgres:16
-
     container_name: de-postgres
-
     restart: unless-stopped
-
     environment:
       POSTGRES_USER: { DB_USER }
       POSTGRES_PASSWORD: { DB_PASSWORD }
       POSTGRES_DB: { DB_NAME }
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - de_network
+
+  airflow:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: de-airflow
+    restart: unless-stopped
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=requests pandas sqlalchemy psycopg2-binary
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./src:/opt/airflow/config/src
+      - ./logs:/opt/airflow/logs
+      - ./sql:/opt/airflow/sql
+    command: standalone
+    networks:
+      - de_network
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
+
+networks:
+  de_network:
+    driver: bridge
